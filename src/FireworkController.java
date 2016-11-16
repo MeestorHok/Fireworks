@@ -58,7 +58,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
 
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setBackground(Color.WHITE);
-        setBorder(new MatteBorder(10, 0, 0, 0, new Color(223, 223, 223)));
+        setBorder(new MatteBorder(0, 0, 10, 0, new Color(223, 223, 223)));
 
         addPositionControls();
         addColorControls();
@@ -257,7 +257,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
     }
 
     private void delete() {
-        ((FireworksContainer) getParent().getParent()).removeFirework(this, id);
+        ((FireworksContainer) getParent().getParent().getParent().getParent()).removeFirework(this, id);
     }
 
     private void updateColor() {

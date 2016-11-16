@@ -9,8 +9,6 @@ public class Canvas extends JComponent {
     public HashMap<Integer, Guideline> guides;
 
     public Canvas() {
-        super();
-
         setPreferredSize(new Dimension(850, 500));
         fireworks = new ArrayList<Firework>();
         guides = new HashMap<Integer, Guideline>();

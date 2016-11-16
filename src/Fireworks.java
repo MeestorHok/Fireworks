@@ -8,6 +8,7 @@ public class Fireworks extends JFrame {
     private Fireworks() {
         setTitle("Fireworks Simulator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
         setLayout(new BorderLayout());
         getContentPane().setBackground(Color.WHITE);
 
