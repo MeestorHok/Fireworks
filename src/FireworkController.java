@@ -4,22 +4,31 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JSlider;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class FireworkController extends JPanel implements ChangeListener, ActionListener {
-    private int id;
-    private FireworksContainer container;
+    public int id;
+    private Canvas canvas;
+    private Guideline guide;
 
     private static final Dimension PREF_SIZE = new Dimension(200, 150);
-    private static final int MAX_POSITION = 500;
-    private static final int MAX_ANGLE = 90;
+    private final int MAX_POSITION;
+    private static final int MAX_ANGLE = 180;
     private static final int MAX_VELOCITY = 100;
     private static final String[] TYPES = { "Circle", "Echo", "Cross", "Fountain", "Weighted", "Disc" };
 
+    private JLabel fireworkLabel;
     private JSlider angleSlider;
     private JSlider posSlider;
     private JSlider velSlider;
@@ -33,7 +42,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
     private JButton removeButton;
 
     private int positionX = 0;
-    private int angle = MAX_ANGLE / 2;
+    private int angle = MAX_ANGLE / 4;
     private int velocity = MAX_VELOCITY / 2;
     private int red = 200;
     private int green = 50;
@@ -41,9 +50,11 @@ public class FireworkController extends JPanel implements ChangeListener, Action
     private double delay = 1.0;
     private String type = TYPES[0];
 
-    public FireworkController(FireworksContainer container, int id) {
+    public FireworkController(int id, Canvas canvas) {
         this.id = id;
-        this.container = container;
+        this.canvas = canvas;
+
+        MAX_POSITION = canvas.getWidth();
 
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setBackground(Color.WHITE);
@@ -53,6 +64,9 @@ public class FireworkController extends JPanel implements ChangeListener, Action
         addColorControls();
         addMiscControls();
         addLaunchButton();
+
+        this.guide = new Guideline(0, canvas.getHeight(), angle, velocity, new Color(red, green, blue));
+        this.canvas.guides.put(id, this.guide); // add this guide to the list of guides
     }
 
     private void addPositionControls() {
@@ -190,7 +204,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
         launchPanel.setPreferredSize(PREF_SIZE);
         launchPanel.setLayout(new BoxLayout(launchPanel, BoxLayout.Y_AXIS));
 
-        JLabel fireworkLabel = new JLabel("Firework " + (id + 1));
+        fireworkLabel = new JLabel("Firework " + (id + 1));
         fireworkLabel.setFont(new Font(fireworkLabel.getFont().getName(), Font.PLAIN, 24));
 
         launchPanel.add(fireworkLabel);
@@ -212,6 +226,11 @@ public class FireworkController extends JPanel implements ChangeListener, Action
         add(launchPanel);
     }
 
+    public void setId(int id) {
+        this.id = id;
+        fireworkLabel.setText("Firework " + (id + 1));
+    }
+
     // Helper function to left align elements
     private Box leftAlign (JLabel label) {
         Box b = Box.createHorizontalBox();
@@ -230,17 +249,24 @@ public class FireworkController extends JPanel implements ChangeListener, Action
         return b;
     }
 
-    void launch() {
-        System.out.println(id + " launched!");
+    void launch(boolean repaint) {
+        Firework fw = new Firework(positionX, angle, velocity, type, delay, new Color(red, green, blue));
+        canvas.fireworks.add(fw);
+
+        if(repaint) canvas.repaint();
     }
 
     private void delete() {
-        container.removeFirework(this, id);
+        ((FireworksContainer) getParent().getParent()).removeFirework(this, id);
     }
 
     private void updateColor() {
-        colorBox.setBorder(new MatteBorder(10, 0, 0, 0, new Color(red, green, blue)));
-        colorBox.setBackground(new Color(red, green, blue));
+        Color newColor = new Color(red, green, blue);
+
+        guide.setColor(newColor);
+
+        colorBox.setBorder(new MatteBorder(10, 0, 0, 0, newColor));
+        colorBox.setBackground(newColor);
         colorBox.repaint();
     }
 
@@ -250,10 +276,13 @@ public class FireworkController extends JPanel implements ChangeListener, Action
 
         if (source == posSlider) {
             positionX = source.getValue();
+            guide.setX(positionX);
         } else if (source == angleSlider) {
             angle = source.getValue();
+            guide.setAngle(angle);
         } else if (source == velSlider) {
             velocity = source.getValue();
+            guide.setLength(velocity);
         } else if (source == redSlider) {
             red = source.getValue();
             updateColor();
@@ -266,15 +295,18 @@ public class FireworkController extends JPanel implements ChangeListener, Action
         } else if (source == delaySlider) {
             delay = source.getValue() / 5.0;
         }
+
+        canvas.repaint();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("type")) {
+        String cmd = e.getActionCommand();
+        if (cmd.equals("type")) {
             type = (String) typeComboBox.getSelectedItem();
-        } else if (e.getActionCommand().equals("launch")) {
-            launch();
-        } else if (e.getActionCommand().equals("delete")) {
+        } else if (cmd.equals("launch")) {
+            launch(true);
+        } else if (cmd.equals("delete")) {
             delete();
         }
     }

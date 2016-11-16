@@ -1,8 +1,12 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,12 +18,16 @@ import javax.swing.border.MatteBorder;
 public class FireworksContainer extends JPanel implements ActionListener {
 
     private FireworkController[] fireworks = new FireworkController[]{};
+    public Canvas canvas;
     private JPanel fireworksContainer;
 
     private JButton addButton;
     private JButton launchAllButton;
+    private JButton clearButton;
 
-    public FireworksContainer() {
+    public FireworksContainer(Canvas canvas) {
+        this.canvas = canvas;
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new MatteBorder(10, 10, 10, 10, new Color(223, 223, 223)));
         addControls();
@@ -36,9 +44,19 @@ public class FireworksContainer extends JPanel implements ActionListener {
         addButton.addActionListener(this);
         controlsPanel.add(addButton, BorderLayout.WEST);
 
+        Box b = Box.createHorizontalBox();
+
+        clearButton = new JButton("Clear Canvas");
+        clearButton.addActionListener(this);
+
+        b.add(clearButton);
+        b.add(Box.createRigidArea(new Dimension(5, 0)));
+
         launchAllButton = new JButton("Launch All");
         launchAllButton.addActionListener(this);
-        controlsPanel.add(launchAllButton, BorderLayout.EAST);
+
+        b.add(launchAllButton);
+        controlsPanel.add(b, BorderLayout.EAST);
 
         add(controlsPanel);
     }
@@ -51,8 +69,10 @@ public class FireworksContainer extends JPanel implements ActionListener {
     }
 
     private void addFirework() {
-        FireworkController newFirework = new FireworkController(this, fireworks.length);
+        // First, create a new firework controller
+        FireworkController newFirework = new FireworkController(fireworks.length, canvas);
 
+        // Then add it to the list of all
         FireworkController[] newFireworks = new FireworkController[fireworks.length + 1];
 
         for (int i = 0; i < fireworks.length; i++) {
@@ -62,6 +82,7 @@ public class FireworksContainer extends JPanel implements ActionListener {
 
         fireworks = newFireworks;
 
+        // Then add it to the UI
         fireworksContainer.add(newFirework);
 
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
@@ -69,6 +90,7 @@ public class FireworksContainer extends JPanel implements ActionListener {
     }
 
     void removeFirework(JPanel fw, int id) {
+        // First, remove it from the list of all
         FireworkController[] newFireworks = new FireworkController[fireworks.length - 1];
 
         for (int i = 0; i < fireworks.length; i++) {
@@ -81,16 +103,41 @@ public class FireworksContainer extends JPanel implements ActionListener {
 
         fireworks = newFireworks;
 
+        // Update the guidelines as well
+        HashMap<Integer, Guideline> newGuides = new HashMap<Integer, Guideline>();
+
+        // Renumber (assign new IDs to) all the fireworks
+        int i = 0;
+        for (FireworkController fwc : fireworks) {
+            newGuides.put(i, canvas.guides.get(fwc.id));
+            fwc.setId(i);
+            i++;
+        }
+
+        canvas.guides = newGuides;
+        canvas.repaint();
+
+        // Then remove it from UI
         fireworksContainer.remove(fw);
+        fireworksContainer.repaint();
 
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         frame.pack();
     }
 
     private void launchAll() {
+        clearCanvas();
+
         for (FireworkController fw : fireworks) {
-            fw.launch();
+            fw.launch(false);
         }
+
+        canvas.repaint();
+    }
+
+    private void clearCanvas() {
+        canvas.fireworks = new ArrayList<Firework>(); // reset fireworks
+        canvas.repaint();
     }
 
     @Override
@@ -101,6 +148,8 @@ public class FireworksContainer extends JPanel implements ActionListener {
             addFirework();
         } else if (source == launchAllButton) {
             launchAll();
+        } else if (source == clearButton) {
+            clearCanvas();
         }
     }
 }

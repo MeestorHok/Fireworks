@@ -3,6 +3,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 
 public class Fireworks extends JFrame {
+    public Canvas canvas;
 
     private Fireworks() {
         setTitle("Fireworks Simulator");
@@ -15,8 +16,10 @@ public class Fireworks extends JFrame {
     }
 
     private void addElements() {
-        add(new Canvas(), BorderLayout.CENTER);
-        add(new FireworksContainer(), BorderLayout.SOUTH);
+        canvas = new Canvas();
+
+        add(canvas, BorderLayout.CENTER);
+        add(new FireworksContainer(canvas), BorderLayout.SOUTH);
     }
 
     public static void main(String[] args) {
