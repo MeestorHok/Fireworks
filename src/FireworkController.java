@@ -8,6 +8,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -130,7 +131,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
 
         colorControlPanel.add(redSlider);
         colorControlPanel.add(bottomAlign(redLabel));
-        colorControlPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        colorControlPanel.add(Box.createRigidArea(new Dimension(20, 0)));
 
         greenSlider = new JSlider(JSlider.VERTICAL, 0, 255, green);
         greenSlider.addChangeListener(this);
@@ -139,7 +140,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
 
         colorControlPanel.add(greenSlider);
         colorControlPanel.add(bottomAlign(greenLabel));
-        colorControlPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        colorControlPanel.add(Box.createRigidArea(new Dimension(20, 0)));
 
         blueSlider = new JSlider(JSlider.VERTICAL, 0, 255, blue);
         blueSlider.addChangeListener(this);
@@ -191,6 +192,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
         miscPanel.add(leftAlign(typeLabel));
         miscPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         miscPanel.add(typeComboBox);
+        miscPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         add(miscPanel);
 
@@ -204,24 +206,31 @@ public class FireworkController extends JPanel implements ChangeListener, Action
         launchPanel.setPreferredSize(PREF_SIZE);
         launchPanel.setLayout(new BoxLayout(launchPanel, BoxLayout.Y_AXIS));
 
+        Box a = Box.createVerticalBox();
+
         fireworkLabel = new JLabel("Firework " + (id + 1));
         fireworkLabel.setFont(new Font(fireworkLabel.getFont().getName(), Font.PLAIN, 24));
 
-        launchPanel.add(fireworkLabel);
-        launchPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        a.add(leftAlign(fireworkLabel));
+        a.add(Box.createVerticalGlue());
 
-        launchButton = new JButton("Launch");
-        launchButton.setActionCommand("launch");
-        launchButton.addActionListener(this);
-
-        launchPanel.add(launchButton);
-        launchPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        Box b = Box.createHorizontalBox();
 
         removeButton = new JButton("Delete");
         removeButton.setActionCommand("delete");
         removeButton.addActionListener(this);
 
-        launchPanel.add(removeButton);
+        b.add(removeButton);
+        b.add(Box.createHorizontalGlue());
+
+        launchButton = new JButton("Launch");
+        launchButton.setActionCommand("launch");
+        launchButton.addActionListener(this);
+
+        b.add(launchButton);
+        a.add(b);
+
+        launchPanel.add(a);
 
         add(launchPanel);
     }
@@ -232,19 +241,19 @@ public class FireworkController extends JPanel implements ChangeListener, Action
     }
 
     // Helper function to left align elements
-    private Box leftAlign (JLabel label) {
+    private Box leftAlign (JComponent comp) {
         Box b = Box.createHorizontalBox();
         b.add(Box.createRigidArea(new Dimension(5, 0)));
-        b.add(label);
+        b.add(comp);
         b.add(Box.createHorizontalGlue());
         return b;
     }
 
     // Helper function to bottom align elements
-    private Box bottomAlign (JLabel label) {
+    private Box bottomAlign (JComponent comp) {
         Box b = Box.createVerticalBox();
         b.add(Box.createVerticalGlue());
-        b.add(label);
+        b.add(comp);
         b.add(Box.createRigidArea(new Dimension(0, 5)));
         return b;
     }

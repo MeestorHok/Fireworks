@@ -1,5 +1,7 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class Guideline {
     private int x1;
@@ -23,7 +25,10 @@ public class Guideline {
 
     public void draw(Graphics g) {
         g.setColor(color);
-        g.drawLine(x1, y1, x2, y2);
+
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setStroke(new BasicStroke(2));
+        g2.drawLine(x1, y1, x2, y2);
     }
 
     public void updateEndpoints() {
