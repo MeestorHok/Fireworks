@@ -24,10 +24,11 @@ public class FireworkController extends JPanel implements ChangeListener, Action
     private Guideline guide;
 
     private static final Dimension PREF_SIZE = new Dimension(200, 150);
-    private final int MAX_POSITION;
+    private final int MAX_HORIZ_POSITION;
+    private final int MAX_VERT_POSITION;
     private static final int MAX_ANGLE = 180;
     private static final int MAX_VELOCITY = 100;
-    private static final String[] TYPES = { "Circle", "Echo", "Cross", "Fountain", "Weighted", "Disc" };
+    private static final String[] TYPES = { "Circle", "Echo", "Heart", "Fountain", "Weighted", "Bubbles" };
 
     private JLabel fireworkLabel;
     private JSlider angleSlider;
@@ -55,7 +56,8 @@ public class FireworkController extends JPanel implements ChangeListener, Action
         this.id = id;
         this.canvas = canvas;
 
-        MAX_POSITION = canvas.getWidth();
+        MAX_HORIZ_POSITION = canvas.getWidth();
+        MAX_VERT_POSITION = canvas.getHeight();
 
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setBackground(Color.WHITE);
@@ -78,7 +80,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
         positionPanel.setLayout(new BoxLayout(positionPanel, BoxLayout.Y_AXIS));
 
         JLabel posLabel = new JLabel("Position");
-        posSlider = new JSlider(JSlider.HORIZONTAL, 0, MAX_POSITION, positionX);
+        posSlider = new JSlider(JSlider.HORIZONTAL, 0, MAX_HORIZ_POSITION, positionX);
         posSlider.addChangeListener(this);
         posSlider.setBackground(Color.WHITE);
 
@@ -259,7 +261,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
     }
 
     void launch(boolean repaint) {
-        Firework fw = new Firework(positionX, angle, velocity, type, delay, new Color(red, green, blue));
+        Firework fw = new Firework(positionX, MAX_VERT_POSITION, angle, velocity, type, delay, new Color(red, green, blue));
         canvas.fireworks.add(fw);
 
         if(repaint) canvas.repaint();
