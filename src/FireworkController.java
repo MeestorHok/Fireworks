@@ -27,8 +27,8 @@ public class FireworkController extends JPanel implements ChangeListener, Action
     private final int MAX_HORIZ_POSITION;
     private final int MAX_VERT_POSITION;
     private static final int MAX_ANGLE = 180;
-    private static final int MAX_VELOCITY = 100;
-    private static final String[] TYPES = { "Circle", "Echo", "Heart", "Fountain", "Weighted", "Bubbles" };
+    private static final int MAX_VELOCITY = 70;
+    private static final String[] TYPES = { "Circle", "Echo", "Fountain", "Weighted", "Bubbles" };
 
     private JLabel fireworkLabel;
     private JSlider angleSlider;
@@ -44,12 +44,12 @@ public class FireworkController extends JPanel implements ChangeListener, Action
     private JButton removeButton;
 
     private int positionX = 0;
-    private int angle = MAX_ANGLE / 4;
-    private int velocity = MAX_VELOCITY / 2;
+    private int angle = (int) Math.round(MAX_ANGLE / 2.9);
+    private int velocity = 30 + (int) Math.round((MAX_VELOCITY - 30) * 0.6);
     private int red = 200;
     private int green = 50;
     private int blue = 255;
-    private double delay = 1.0;
+    private int delay = 12;
     private String type = TYPES[0];
 
     public FireworkController(int id, Canvas canvas) {
@@ -98,7 +98,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
         positionPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         JLabel velLabel = new JLabel("Velocity");
-        velSlider = new JSlider(JSlider.HORIZONTAL, 0, MAX_VELOCITY, velocity);
+        velSlider = new JSlider(JSlider.HORIZONTAL, 30, MAX_VELOCITY, velocity);
         velSlider.addChangeListener(this);
         velSlider.setBackground(Color.WHITE);
 
@@ -175,7 +175,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
         miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.Y_AXIS));
 
         JLabel delayLabel = new JLabel("Delay");
-        delaySlider = new JSlider(JSlider.HORIZONTAL, 0, 15, (int) (delay * 5));
+        delaySlider = new JSlider(JSlider.HORIZONTAL, 5, 14, delay);
         delaySlider.addChangeListener(this);
         delaySlider.setBackground(Color.WHITE);
 
@@ -304,7 +304,7 @@ public class FireworkController extends JPanel implements ChangeListener, Action
             blue = source.getValue();
             updateColor();
         } else if (source == delaySlider) {
-            delay = source.getValue() / 5.0;
+            delay = source.getValue();
         }
 
         canvas.repaint();

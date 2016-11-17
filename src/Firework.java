@@ -24,7 +24,7 @@ public class Firework {
         this.startingX = startingX;
         this.startingY = startingY;
         this.startingAngle = angle;
-        this.initialVelocity = velocity / 3.0; // used to throttle input
+        this.initialVelocity = velocity / 4.0; // used to throttle input
 
         this.x = this.startingX;
         this.y = this.startingY;
@@ -32,7 +32,7 @@ public class Firework {
         this.velocity = this.initialVelocity;
 
         this.type = type;
-        this.delay = delay;
+        this.delay = 16 - delay; // inverse delay to make slider more intuitive
         this.color = color;
     }
 
@@ -61,9 +61,6 @@ public class Firework {
                 break;
             case "Echo":
                 echo(g);
-                break;
-            case "Heart":
-                heart(g);
                 break;
             case "Fountain":
                 fountain(g);
@@ -196,8 +193,6 @@ public class Firework {
         initialize(10,0);
         draw(360, true, 1.8, 0.1, 36, 0, g);
     }
-
-    private void heart(Graphics g) {}
 
     private void fountain(Graphics g) {
         initialize(10, 50);
