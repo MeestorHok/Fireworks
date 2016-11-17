@@ -2,11 +2,11 @@ import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
-public class Fireworks extends JFrame {
+public class Simulator extends JFrame {
     public Canvas canvas;
 
-    private Fireworks() {
-        setTitle("Fireworks Simulator");
+    private Simulator() {
+        setTitle("Simulator Simulator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setLayout(new BorderLayout());
@@ -24,7 +24,6 @@ public class Fireworks extends JFrame {
     }
 
     public static void main(String[] args) {
-        Fireworks fireworks = new Fireworks();
-        fireworks.setVisible(true);
+        new Simulator().setVisible(true);
     }
 }
